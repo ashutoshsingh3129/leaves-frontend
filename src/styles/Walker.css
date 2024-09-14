@@ -1,0 +1,25 @@
+.table-container {
+    padding: 20px;
+  }
+  
+  .walkers-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .walkers-table th,
+  .walkers-table td {
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .walkers-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+  }
+  
+  .walkers-table tr:hover {
+    background-color: #f0f0f0;
+  }
+  
