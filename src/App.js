@@ -1,18 +1,21 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LeaveTable from './components/Dashboard';
-import LeaveForm from './components/LeaveForm';
+import Dashboard from './components/Dashboard';
 import WalkersTable from './components/WalkerTable';
+import { ToastContainer } from 'react-toastify';
 
 const App = () => {
   return (
-    <Router>
+    <>   
+          <ToastContainer />
+
+     <Router>
       <Routes>
-        <Route path="" element={<LeaveTable />} />
-        <Route path="/leaves" element={<WalkersTable />} />
-        <Route path="/add-leave" element={<LeaveForm />} />
+        <Route path="" element={<Dashboard />} />
+        <Route path="/walker" element={<WalkersTable />} />
       </Routes>
     </Router>
+    </>
   );
 };
 

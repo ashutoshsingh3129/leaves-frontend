@@ -67,18 +67,17 @@
   }
   .checkbox-group {
     display: flex; 
-    margin-bottom: 15px; /* Add spacing below the checkbox group if needed */
+    margin-bottom: 15px; 
   }
   
   .checkbox-group input[type="checkbox"] {
-    margin-right: 20px; /* Space between checkbox and label text */
+    margin-right: 20px; 
   }
-  /* Button positioned on the right */
  .add-button{ position: absolute;
-  right: 20px; /* Right margin */
-  top: 20px;   /* Top margin */
+  right: 20px; 
+  top: 20px;   
   padding: 10px 20px;
-  background-color: #4CAF50; /* Green background */
+  background-color: #4CAF50; 
   color: white;
   border: none;
   border-radius: 5px;
@@ -86,10 +85,26 @@
   font-size: 16px;
   transition: background-color 0.3s ease;
  }
-/* Hover effect */
 .add-button:hover {
-  background-color: #45a049; /* Darker green */
+  background-color: #45a049; 
+}
+  
+
+.button-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #a76128;
+  color: white;
+  border-radius: 5px; 
+  text-decoration: none;
+  font-weight: bold;
+  position: fixed; 
+  bottom: 20px; 
+  right: 20px; 
+  margin-top: 10px;
+  z-index: 1000; /* Ensures it stays above other content */
 }
 
-  
-  
+.button-link:hover {
+  background-color: #218838;
+}

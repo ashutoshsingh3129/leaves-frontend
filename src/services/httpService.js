@@ -1,55 +1,41 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
-// Create an Axios instance
 const http = axios.create({
-  baseURL: 'http://localhost:5000', // Backend URL (port 5000)
+  baseURL: 'https://leave-backend-pmza.onrender.com/',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Add a request interceptor to handle authentication, headers, etc.
-http.interceptors.request.use(
-  (config) => {
-    // You can add tokens, authorization headers, etc., here
-    return config;
-  },
-  (error) => {
-    // Handle request errors
-    return Promise.reject(error);
-  }
-);
-
-// Add a response interceptor to format responses and handle errors globally
 http.interceptors.response.use(
   (response) => {
-    // Format all responses uniformly
-    console.log("rr",response)
+    const customStatusCode = response.data?.statusCode ?? response.status;
+
     return {
-      statusCode: response.status,
+      statusCode: customStatusCode,
       data: response.data.data,
       message: response.data.message,
-      error: response.error,
+      error: response.data.error || null,
     };
   },
   (error) => {
-    // Global error handling
-    console.error(error)
     if (error.response) {
-      // Server-side error
+      const errorMessage = error.response.data.message || 'An error occurred';
+      toast.error(errorMessage);
       return Promise.reject({
         statusCode: error.response.status,
-        message: error.response.data.message || 'Something went wrong',
+        message: errorMessage,
         error: error.response.data.error || 'Server Error',
       });
     } else if (error.request) {
-      // No response from server
+      toast.error('No response from server');
       return Promise.reject({
         message: 'No response from server',
         error: error.message,
       });
     } else {
-      // Something else went wrong
+      toast.error('Request error');
       return Promise.reject({
         message: 'Request error',
         error: error.message,

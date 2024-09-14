@@ -1,25 +1,55 @@
-.table-container {
-    padding: 20px;
-  }
-  
-  .walkers-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .walkers-table th,
-  .walkers-table td {
-    border-bottom: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
-  }
-  
-  .walkers-table th {
-    background-color: #f5f5f5;
-    font-weight: bold;
-  }
-  
-  .walkers-table tr:hover {
-    background-color: #f0f0f0;
-  }
-  
+.app-container {
+  padding: 20px;
+}
+
+.walkers-table,
+.time-slots-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.walkers-table th,
+.walkers-table td,
+.time-slots-table th,
+.time-slots-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.walkers-table th,
+.time-slots-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.walkers-table tbody tr:hover,
+.time-slots-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.walkers-table td {
+  vertical-align: middle;
+}
+
+.time-range {
+  background-color: #ff6b6b;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+
+.time-range:hover {
+  background-color: #ff4d4d;
+}
+
+button img {
+  width: 24px;
+  height: 24px;
+}
+
+.status-completed {
+  color: green;
+}
