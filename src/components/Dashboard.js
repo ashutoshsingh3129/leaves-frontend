@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/LeaveForm.css';
+import '../styles/Dashboard.css';
 import Modal from './Modal';
 import '../styles/LeaveTable.css';
 import http from '../services/httpService';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-const LeaveForm = () => {
+const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [leave, setLeave] = useState([]);
   const [partners, setPartners] = useState([]);
   const [editLeaveId, setEditLeaveId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     partnerId: '',
     reason: '',
@@ -37,21 +38,28 @@ const LeaveForm = () => {
   };
   const getLeaves = async () => {
     try {
+      setIsLoading(true);
       let response = await http.get('/leaves')
       if (response.data) setLeave(response.data.data)
+              setIsLoading(false);
+
       return response
     } catch (err) {
       console.log("ee", err)
+      setIsLoading(false);
       toast.error(err.message || 'An error occurred while feching leave');
     }
 
   }
   const getPartners = async () => {
     try {
+      setIsLoading(true);
       let response = await http.get('/partners')
       if (response.data) setPartners(response.data)
+        setIsLoading(false);
       return response
     } catch (err) {
+      setIsLoading(false);
       toast.error(err.message || 'An error occurred while feching partners');
     }
   }
@@ -168,257 +176,255 @@ const LeaveForm = () => {
   };
 
   return (
-    <div>
-      <button className="add-button" onClick={handleAdd}>
-        Add Leave
-      </button>
-      <a href="/walker" className="button-link">Go to Walker Tab</a>
-
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        {!isEditMode ? (
-          <form onSubmit={handleCreate}>
-            <div className="form-group">
-              <label>Select Walker *</label>
-              {partners.length > 0 && (
-                <select
-                  name="partnerId"
-                  value={formData.partnerId}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Select Walker</option>
-                  {partners?.map((partner) => (
-                    <option key={partner._id} value={partner._id}>
-                      {partner.name}
-                    </option>
-                  ))}
-                </select>
-              )}
-
-
-            </div>
-
-            <div className="form-group">
-              <label>Add Reason</label>
-              <input
-                type="text"
-                name="reason"
-                placeholder="Add Reason"
-                value={formData.reason}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Start Date</label>
-              <input
-                type="date"
-                name="startDate"
-                value={formData.startDate}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>End Date</label>
-              <input
-                type="date"
-                name="endDate"
-                value={formData.endDate}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            {isSameDate && (
-              <>
-
+    <>
+     <a href="/walker" className="button-link">Go to Walker Tab</a>
+      {isLoading ? (
+        <div className="loader-overlay">
+          <div className="loader"></div>
+          <div className="loader-text">Loading data, please wait...</div>
+        </div>
+      ) : (
+        <>
+          <button className="add-button" onClick={handleAdd}>
+            Add Leave
+          </button>
+  
+          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            {!isEditMode ? (
+              <form onSubmit={handleCreate}>
                 <div className="form-group">
-                  <label>Select Slot(s)</label>
-                  <select onChange={handleSlotSelect} value="">
-                    <option value="">Select Slot</option>
-                    {slots.map((timeSlot, index) => (
-                      <option key={index} value={timeSlot}>
-                        {timeSlot}
-                      </option>
-                    ))}
-                  </select>
-
-                  <div className="selected-slots">
-                    {formData.slots.map((slot, index) => (
-                      <div key={index} className="chip">
-                        {slot}
-                        <span
-                          className="closebtn"
-                          onClick={() => handleRemoveSlot(slot)}
-                        >
-                          &times;
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                  <label>Select Walker *</label>
+                  {partners.length > 0 && (
+                    <select
+                      name="partnerId"
+                      value={formData.partnerId}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Select Walker</option>
+                      {partners?.map((partner) => (
+                        <option key={partner._id} value={partner._id}>
+                          {partner.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
-              </>
-            )}
-            <div className="form-group checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="removePenalty"
-                  checked={formData.removePenalty}
-                  onChange={handleChange}
-                />
-              </label>
-              Want to Remove Penalty?
-            </div>
-            <button type="submit" className="submit-btn">Create</button>
-          </form>
-        ) : (
-          <form onSubmit={handleUpdate}>
-            <div className="form-group">
-              {console.log("form", formData)}
-              <label>Start Date</label>
-              <input
-                type="date"
-                name="startDate"
-                value={formData.startDate}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>End Date</label>
-              <input
-                type="date"
-                name="endDate"
-                value={formData.endDate}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            {isSameDate && (
-              <>
-
+  
                 <div className="form-group">
-                  <label>Select Slot(s)</label>
-                  <select onChange={handleSlotSelect} value="">
-                    <option value="">Select Slot</option>
-                    {slots.map((timeSlot, index) => (
-                      <option key={index} value={timeSlot}>
-                        {timeSlot}
-                      </option>
-                    ))}
-                  </select>
-
-                  <div className="selected-slots">
-                    {formData.slots.map((slot, index) => (
-                      <div key={index} className="chip">
-                        {slot}
-                        <span
-                          className="closebtn"
-                          onClick={() => handleRemoveSlot(slot)}
-                        >
-                          &times;
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                  <label>Add Reason</label>
+                  <input
+                    type="text"
+                    name="reason"
+                    placeholder="Add Reason"
+                    value={formData.reason}
+                    onChange={handleChange}
+                  />
                 </div>
-              </>
+  
+                <div className="form-group">
+                  <label>Start Date</label>
+                  <input
+                    type="date"
+                    name="startDate"
+                    value={formData.startDate}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+  
+                <div className="form-group">
+                  <label>End Date</label>
+                  <input
+                    type="date"
+                    name="endDate"
+                    value={formData.endDate}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+  
+                {isSameDate && (
+                  <div className="form-group">
+                    <label>Select Slot(s)</label>
+                    <select onChange={handleSlotSelect} value="">
+                      <option value="">Select Slot</option>
+                      {slots.map((timeSlot, index) => (
+                        <option key={index} value={timeSlot}>
+                          {timeSlot}
+                        </option>
+                      ))}
+                    </select>
+  
+                    <div className="selected-slots">
+                      {formData.slots.map((slot, index) => (
+                        <div key={index} className="chip">
+                          {slot}
+                          <span
+                            className="closebtn"
+                            onClick={() => handleRemoveSlot(slot)}
+                          >
+                            &times;
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+  
+                <div className="form-group checkbox-group">
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="removePenalty"
+                      checked={formData.removePenalty}
+                      onChange={handleChange}
+                    />
+                  </label>
+                  Want to Remove Penalty?
+                </div>
+                <button type="submit" className="submit-btn">Create</button>
+              </form>
+            ) : (
+              <form onSubmit={handleUpdate}>
+                <div className="form-group">
+                  <label>Start Date</label>
+                  <input
+                    type="date"
+                    name="startDate"
+                    value={formData.startDate}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+  
+                <div className="form-group">
+                  <label>End Date</label>
+                  <input
+                    type="date"
+                    name="endDate"
+                    value={formData.endDate}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+  
+                {isSameDate && (
+                  <div className="form-group">
+                    <label>Select Slot(s)</label>
+                    <select onChange={handleSlotSelect} value="">
+                      <option value="">Select Slot</option>
+                      {slots.map((timeSlot, index) => (
+                        <option key={index} value={timeSlot}>
+                          {timeSlot}
+                        </option>
+                      ))}
+                    </select>
+  
+                    <div className="selected-slots">
+                      {formData.slots.map((slot, index) => (
+                        <div key={index} className="chip">
+                          {slot}
+                          <span
+                            className="closebtn"
+                            onClick={() => handleRemoveSlot(slot)}
+                          >
+                            &times;
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+  
+                <div className="form-group">
+                  <label>Status</label>
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="PENDING">Pending</option>
+                    <option value="APPROVED">Approved</option>
+                    <option value="REJECTED">Rejected</option>
+                  </select>
+                </div>
+  
+                <div className="form-group checkbox-group">
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="removePenalty"
+                      checked={formData.removePenalty}
+                      onChange={handleChange}
+                    />
+                  </label>
+                  Want to Remove Penalty?
+                </div>
+  
+                <button type="submit" className="submit-btn">Update</button>
+              </form>
             )}
-
-            <div className="form-group">
-              <label>Status</label>
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                required
-              >
-                <option value="PENDING">Pending</option>
-                <option value="APPROVED">Approved</option>
-                <option value="REJECTED">Rejected</option>
-              </select>
-            </div>
-
-            <div className="form-group checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="removePenalty"
-                  checked={formData.removePenalty}
-                  onChange={handleChange}
-                />
-              </label>
-              Want to Remove Penalty?
-            </div>
-
-            <button type="submit" className="submit-btn">Update</button>
-          </form>
-        )}
-      </Modal>
-
-      <div>
-        <h1>Leaves</h1>
-        <table className="leave-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>City</th>
-              <th>Applied Date</th>
-              <th>Start Date</th>
-              <th>End Date</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leave?.map((leave, index) => {
-              const formatDateTime = (date, utc) => {
-                let conf = {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  hour12: true,
-                };
-
-                if (utc) {
-                  conf['timeZone'] = 'UTC';
-                }
-                return new Date(date).toLocaleString('en-US', conf);
-              };
-
-              return (
-                <tr key={index}>
-                  <td>{leave?.partner?.name || 'N/A'}</td>
-                  <td>{leave?.partner?.city || 'N/A'}</td>
-                  <td>{formatDateTime(leave?.createdAt, false)}</td>
-                  <td>{formatDateTime(leave?.startDate, true)}</td>
-                  <td>{formatDateTime(leave?.endDate, true)}</td>
-                  <td>
-                    <span className={leave?.status === 'APPROVED' ? 'approved' : 'pending'}>
-                      {leave?.status || 'Unknown'}
-                    </span>
-                  </td>
-                  <td>
-                    <button onClick={() => handleEdit(leave)} className="edit-btn">✎</button>
-                    <button onClick={() => handleDelete(leave?._id)} className="delete-btn">🗑</button>
-                  </td>
+          </Modal>
+  
+          <div>
+            <h1>Leaves</h1>
+            <table className="leave-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>City</th>
+                  <th>Applied Date</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              );
-            })}
-
-
-          </tbody>
-        </table>
-      </div>
-    </div>
+              </thead>
+              <tbody>
+                {leave?.map((leave, index) => {
+                  const formatDateTime = (date, utc) => {
+                    let conf = {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true,
+                    };
+  
+                    if (utc) {
+                      conf['timeZone'] = 'UTC';
+                    }
+                    return new Date(date).toLocaleString('en-US', conf);
+                  };
+  
+                  return (
+                    <tr key={index}>
+                      <td>{leave?.partner?.name || 'N/A'}</td>
+                      <td>{leave?.partner?.city || 'N/A'}</td>
+                      <td>{formatDateTime(leave?.createdAt, false)}</td>
+                      <td>{formatDateTime(leave?.startDate, true)}</td>
+                      <td>{formatDateTime(leave?.endDate, true)}</td>
+                      <td>
+                        <span className={leave?.status === 'APPROVED' ? 'approved' : 'pending'}>
+                          {leave?.status || 'Unknown'}
+                        </span>
+                      </td>
+                      <td>
+                        <button onClick={() => handleEdit(leave)} className="edit-btn">✎</button>
+                        <button onClick={() => handleDelete(leave?._id)} className="delete-btn">🗑</button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </>
   );
-};
-
-export default LeaveForm;
+}
+export default Dashboard  
